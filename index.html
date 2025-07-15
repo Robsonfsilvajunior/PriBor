@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PriBor Motors
+    </title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header>
+        <div class="logo">
+            <h1>Loja de Carros</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="https://wa.me/seunumerodewhatsapp" target="_blank">WhatsApp</a></li>
+                <li><a href="https://www.instagram.com/pribor.motors/" target="_blank">Instagram</a></li>
+                <li><a href="https://www.facebook.com/sualoja" target="_blank">Facebook</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Catálogo -->
+    <section id="catalogo">
+        <h2>Nossos Veículos</h2>
+        <div class="carro" onclick="mostrarDetalhes('carro1')">
+            <img src="https://via.placeholder.com/400" alt="Imagem do carro">
+            <h3>Carro Modelo X</h3>
+            <p>Preço: R$ 80.000,00</p>
+        </div>
+        <div class="carro" onclick="mostrarDetalhes('carro2')">
+            <img src="https://via.placeholder.com/400" alt="Imagem do carro">
+            <h3>Carro Modelo Y</h3>
+            <p>Preço: R$ 70.000,00</p>
+        </div>
+    </section>
+
+    <!-- Seção de Detalhes -->
+    <section id="detalhes" style="display: none;">
+        <button onclick="voltar()">Voltar ao Catálogo</button> <!-- Botão para voltar -->
+        <div id="conteudo-detalhes"></div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2024 Loja de Carros. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
