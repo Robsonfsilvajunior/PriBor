@@ -1,8 +1,8 @@
 // App.tsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import home from './pages/home'
-import showroom from './pages/showroom'
-import admin from './pages/admin'
+import Home from './pages/home'
+import Showroom from './pages/showroom'
+import Admin from './pages/admin'
 
 function App() {
   return (
@@ -15,3 +15,5 @@ function App() {
     </BrowserRouter>
   )
 }
+
+export default App;
