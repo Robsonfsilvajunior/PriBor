@@ -1,0 +1,9 @@
+{
+  "name": "pribor",
+  "version": "1.0.0",
+  "description": "Sistema de Gerenciamento de Estoque de Veículos",
+  "scripts": {
+    "dev": "cd backend && npm run dev",
+    "install:all": "cd backend && npm install"
+  }
+} 

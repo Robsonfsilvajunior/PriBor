@@ -1,12 +1,45 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
 
-const carSchema = new mongoose.Schema({
-  modelo: String,
-  marca: String,
-  ano: Number,
-  preco: Number,
-  descricao: String,
-  imagens: [String]
-})
+const CarSchema = new mongoose.Schema({
+  nome: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  placa: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  chassi: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  ano: {
+    type: Number,
+    required: true,
+    min: 1900,
+    max: new Date().getFullYear() + 1
+  },
+  km: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  preco: {
+    type: Number,
+    required: false,
+    min: 0
+  },
+  imagens: {
+    type: [String],
+    default: []
+  }
+}, {
+  timestamps: true
+});
 
-export default mongoose.model("Car", carSchema)
+export const Car = mongoose.model('Car', CarSchema);

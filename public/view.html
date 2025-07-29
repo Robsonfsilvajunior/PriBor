@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Veículo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button onclick="window.location.href='index.html'" class="btn-back">← Voltar</button>
+            <div class="header-actions">
+                <button id="editBtn" class="btn-edit">Editar</button>
+                <button id="deleteBtn" class="btn-delete">Excluir</button>
+            </div>
+        </header>
+
+        <main>
+            <div id="loading" class="loading">Carregando veículo...</div>
+            <div id="error" class="error" style="display: none;"></div>
+            
+            <div id="vehicleDetails" class="vehicle-details" style="display: none;">
+                <div class="vehicle-images">
+                    <div id="imageGallery" class="image-gallery"></div>
+                </div>
+
+                <div class="vehicle-info">
+                    <h1 id="vehicleName"></h1>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Placa:</label>
+                            <span id="vehiclePlate"></span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label>Chassi:</label>
+                            <span id="vehicleChassi"></span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label>Ano:</label>
+                            <span id="vehicleYear"></span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label>Quilometragem:</label>
+                            <span id="vehicleKm"></span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label>Preço:</label>
+                            <span id="vehiclePrice"></span>
+                        </div>
+                    </div>
+
+                    <div class="vehicle-dates">
+                        <p><strong>Cadastrado em:</strong> <span id="vehicleCreated"></span></p>
+                        <p><strong>Última atualização:</strong> <span id="vehicleUpdated"></span></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

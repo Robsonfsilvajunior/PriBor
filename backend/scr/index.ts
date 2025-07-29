@@ -1,20 +1,34 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
-import { connectDB } from "./config/db"
+import path from "path"
 import carRoutes from "./routes/carRoutes"
 
 dotenv.config()
 const app = express()
 
-app.use(cors())
+// Configurar CORS
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}))
+
 app.use(express.json())
 
-connectDB()
+// Servir arquivos estáticos
+app.use(express.static(path.join(__dirname, '../../public')))
 
-app.use("/api/cars", carRoutes)
+const PORT = process.env.PORT || 3000
 
-const PORT = process.env.PORT || 5000
+// Rotas da API
+app.use('/carros', carRoutes)
+
+// Rota para servir a página inicial
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/index.html'))
+})
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`)
+  console.log(`Acesse: http://localhost:${PORT}`)
 })

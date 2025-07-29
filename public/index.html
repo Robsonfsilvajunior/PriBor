@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gerenciamento de Veículos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sistema de Gerenciamento de Veículos</h1>
+            <button onclick="window.location.href='add.html'" class="btn-add">+ Adicionar Veículo</button>
+        </header>
+
+        <main>
+            <div id="loading" class="loading">Carregando veículos...</div>
+            <div id="error" class="error" style="display: none;"></div>
+            <div id="vehicles" class="vehicles-grid"></div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
