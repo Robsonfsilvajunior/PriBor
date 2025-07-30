@@ -445,4 +445,17 @@ header h1 {
     .image-gallery img {
         height: 120px; /* Altura das miniaturas da galeria menor */
     }
+
+    .error-message {
+        color: red;
+        font-size: 0.85em;
+        margin-top: 5px;
+        display: block; /* Garante que o span ocupe sua própria linha */
+    }
+    
+    .form-group input.invalid,
+    .form-group textarea.invalid {
+        border-color: red;
+        box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+    }
 }

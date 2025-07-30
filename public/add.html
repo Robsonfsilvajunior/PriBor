@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adicionar Veículo</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .error-message {
+            color: #dc3545; /* Cor vermelha para erros */
+            font-size: 0.875em; /* Tamanho da fonte menor */
+            display: block; /* Garante que a mensagem fique em sua própria linha */
+            margin-top: 5px;
+        }
+        input.invalid {
+            border-color: #dc3545; /* Borda vermelha para campos inválidos */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -18,38 +29,53 @@
                 <div class="form-group">
                     <label for="nome">Nome/Modelo *</label>
                     <input type="text" id="nome" name="nome" required>
+                    <span id="nome-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="placa">Placa *</label>
                     <input type="text" id="placa" name="placa" required>
+                    <span id="placa-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="chassi">Chassi *</label>
-                    <input type="text" id="chassi" name="chassi" required>
+                    <input type="text" id="chassi" name="chassi"
+                           maxlength="17" pattern="^[A-HJ-NPR-Z0-9]{17}$"
+                           title="O chassi deve ter exatamente 17 caracteres (letras e números, exceto I, O, Q)." required>
+                    <span id="chassi-error" class="error-message"></span>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="ano">Ano *</label>
-                        <input type="number" id="ano" name="ano" min="1900" max="2025" required>
+                        <input type="text" id="ano" name="ano"
+                               maxlength="4" pattern="^(19|20)\d{2}$"
+                               title="Por favor, insira um ano válido com 4 dígitos (entre 1900 e o ano atual)." required>
+                        <span id="ano-error" class="error-message"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="km">Quilometragem *</label>
-                        <input type="number" id="km" name="km" min="0" required>
+                        <input type="text" id="km" name="km"
+                               inputmode="decimal" placeholder="Ex: 50.000,50"
+                               title="A quilometragem deve ser um número, use vírgula para decimais (ex: 50000,50)." required>
+                        <span id="km-error" class="error-message"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="preco">Preço (opcional)</label>
-                    <input type="number" id="preco" name="preco" min="0" step="0.01">
+                    <label for="preco">Preço *</label>
+                    <input type="text" id="preco" name="preco"
+                           inputmode="decimal" placeholder="Ex: 35.000,00"
+                           title="O preço deve ser um número, use vírgula para decimais (ex: 35000,00).">
+                    <span id="preco-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="imagens">Imagens (URLs, uma por linha)</label>
                     <textarea id="imagens" name="imagens" rows="4" placeholder="https://exemplo.com/imagem1.jpg&#10;https://exemplo.com/imagem2.jpg"></textarea>
+                    <span id="imagens-error" class="error-message"></span>
                 </div>
 
                 <div class="form-actions">
@@ -62,4 +88,4 @@
 
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
