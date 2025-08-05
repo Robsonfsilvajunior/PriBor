@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/carros';
+const API_BASE_URL = 'http://localhost:3000/carros';
 
 // --- Funções Utilitárias de Formatação ---
 function formatPrice(price) {

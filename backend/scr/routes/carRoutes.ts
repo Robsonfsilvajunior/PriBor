@@ -1,39 +1,41 @@
 import express from 'express';
+import { Car } from '../models/car';
 
 const router = express.Router();
 
-// Armazenamento em memória (simula banco de dados)
-let vehicles: any[] = [];
-let nextId = 1;
-
 // Listar todos os veículos
-router.get('/', (req, res) => {
-  res.json(vehicles);
+router.get('/', async (req, res) => {
+  try {
+    const vehicles = await Car.find().sort({ createdAt: -1 });
+    res.json(vehicles);
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro ao buscar veículos', detalhes: err });
+  }
 });
 
 // Criar veículo
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const vehicle = {
-      _id: nextId.toString(),
-      ...req.body,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    vehicles.push(vehicle);
-    nextId++;
-    
-    res.status(201).json(vehicle);
-  } catch (err) {
-    res.status(400).json({ erro: 'Erro ao cadastrar veículo', detalhes: err });
+    const vehicle = new Car(req.body);
+    const savedVehicle = await vehicle.save();
+    res.status(201).json(savedVehicle);
+  } catch (err: any) {
+    if (err.code === 11000) {
+      // Erro de duplicação (placa ou chassi já existe)
+      const field = Object.keys(err.keyPattern)[0];
+      res.status(400).json({ 
+        erro: `${field === 'placa' ? 'Placa' : 'Chassi'} já cadastrada no sistema` 
+      });
+    } else {
+      res.status(400).json({ erro: 'Erro ao cadastrar veículo', detalhes: err.message });
+    }
   }
 });
 
 // Buscar veículo por ID
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const vehicle = vehicles.find(v => v._id === req.params.id);
+    const vehicle = await Car.findById(req.params.id);
     if (!vehicle) {
       return res.status(404).json({ erro: 'Veículo não encontrado' });
     }
@@ -44,34 +46,40 @@ router.get('/:id', (req, res) => {
 });
 
 // Atualizar veículo
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const index = vehicles.findIndex(v => v._id === req.params.id);
-    if (index === -1) {
+    const vehicle = await Car.findByIdAndUpdate(
+      req.params.id, 
+      req.body, 
+      { new: true, runValidators: true }
+    );
+    
+    if (!vehicle) {
       return res.status(404).json({ erro: 'Veículo não encontrado' });
     }
     
-    vehicles[index] = {
-      ...vehicles[index],
-      ...req.body,
-      updatedAt: new Date().toISOString()
-    };
-    
-    res.json(vehicles[index]);
-  } catch (err) {
-    res.status(400).json({ erro: 'Erro ao atualizar', detalhes: err });
+    res.json(vehicle);
+  } catch (err: any) {
+    if (err.code === 11000) {
+      // Erro de duplicação (placa ou chassi já existe)
+      const field = Object.keys(err.keyPattern)[0];
+      res.status(400).json({ 
+        erro: `${field === 'placa' ? 'Placa' : 'Chassi'} já cadastrada no sistema` 
+      });
+    } else {
+      res.status(400).json({ erro: 'Erro ao atualizar', detalhes: err.message });
+    }
   }
 });
 
 // Deletar veículo
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    const index = vehicles.findIndex(v => v._id === req.params.id);
-    if (index === -1) {
+    const vehicle = await Car.findByIdAndDelete(req.params.id);
+    if (!vehicle) {
       return res.status(404).json({ erro: 'Veículo não encontrado' });
     }
     
-    vehicles.splice(index, 1);
     res.json({ mensagem: 'Veículo removido com sucesso' });
   } catch (err) {
     res.status(400).json({ erro: 'Erro ao deletar', detalhes: err });

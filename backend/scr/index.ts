@@ -2,10 +2,14 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 import path from "path"
+import { connectDB } from "./config/db"
 import carRoutes from "./routes/carRoutes"
 
 dotenv.config()
 const app = express()
+
+// Conectar ao MongoDB
+connectDB()
 
 // Configurar CORS
 app.use(cors({
