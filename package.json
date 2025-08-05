@@ -2,8 +2,11 @@
   "name": "pribor-1",
   "version": "1.0.0",
   "description": "Sistema web simples para gerenciamento de estoque de veículos, construído com Node.js + Express + TypeScript no backend, MongoDB como banco de dados, e HTML/CSS/JavaScript puro no frontend.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon --watch \"backend/scr/**/*.ts\" --exec \"npx ts-node\" backend/scr/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +27,7 @@
     "mongoose": "^8.17.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.2.0",
     "nodemon": "^3.1.10",
