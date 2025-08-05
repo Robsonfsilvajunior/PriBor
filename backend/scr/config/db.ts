@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 
 export const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI || "mongodb+srv://Robertin:123456@cluster0.aktpx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    const mongoURI = process.env.MONGO_URI || mongodb+srv://Robertin:123456@cluster0.aktpx.mongodb.net/
 
     await mongoose.connect(mongoURI)
     console.log("MongoDB conectado com sucesso")
