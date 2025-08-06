@@ -5,7 +5,7 @@ import path from "path"
 import { connectDB } from "./config/db"
 import carRoutes from "./routes/carRoutes"
 
-dotenv.config()
+dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 const app = express()
 
 // Conectar ao MongoDB
