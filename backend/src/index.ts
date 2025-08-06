@@ -6,6 +6,8 @@ import { connectDB } from "./config/db"
 import carRoutes from "./routes/carRoutes"
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') })
+console.log("Valor de MONGO_URI lido:", process.env.MONGO_URI);
+
 const app = express()
 
 // Conectar ao MongoDB
