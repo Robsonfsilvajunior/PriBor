@@ -1,11 +1,13 @@
 import express from "express"
 import cors from "cors"
-import dotenv from "dotenv"
+//import dotenv from "dotenv"
 import path from "path"
 import { connectDB } from "./config/db"
 import carRoutes from "./routes/carRoutes"
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') })
+//dotenv.config({ path: path.resolve(__dirname, '../../.env') })
+process.env.MONGO_URI = 'mongodb+srv://Robertin:123456@cluster0.aktpx.mongodb.net/'
+process.env.PORT = '3000'
 console.log("Valor de MONGO_URI lido:", process.env.MONGO_URI);
 
 const app = express()
