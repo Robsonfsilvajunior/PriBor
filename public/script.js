@@ -82,21 +82,22 @@ function clearFieldError(inputElement, errorElement) {
     inputElement.setAttribute('aria-invalid', 'false');
 }
 
-// Validação de Chassi
+// Validação de Chassi - AGORA VALIDA APENAS 6 DÍGITOS
 const validateChassi = () => {
     const input = formFields.chassi.input;
     const error = formFields.chassi.error;
     if (!input || !error) return true;
 
     const chassiValue = input.value.trim().toUpperCase();
-    const chassiPattern = /^[A-HJ-NPR-Z0-9]{17}$/;
+    // Padrão para exatamente 6 caracteres alfanuméricos válidos
+    const chassiPattern = /^[A-HJ-NPR-Z0-9]{6}$/;
 
     if (input.required && chassiValue === '') {
         showFieldError(input, error, 'O campo Chassi é obrigatório.');
         return false;
     }
     if (chassiValue !== '' && !chassiPattern.test(chassiValue)) {
-        showFieldError(input, error, 'O chassi deve ter exatamente 17 caracteres alfanuméricos válidos.');
+        showFieldError(input, error, 'O chassi deve ter exatamente 6 caracteres alfanuméricos válidos.');
         return false;
     }
     clearFieldError(input, error);
@@ -194,8 +195,8 @@ const validateNumericField = (input, error, fieldName, allowDecimals, required) 
     }
 
     if (!allowDecimals && numericValue % 1 !== 0) {
-         showFieldError(input, error, `O campo ${fieldName} deve ser um número inteiro.`);
-         return false;
+          showFieldError(input, error, `O campo ${fieldName} deve ser um número inteiro.`);
+          return false;
     }
 
     clearFieldError(input, error);
@@ -259,7 +260,8 @@ function validateForm() {
     const allFieldsValid = isNomeValid && isPlacaValid && isChassiValid && isAnoValid && isKmValid && isPrecoValid;
 
     if (!allFieldsValid) {
-        alert('Por favor, preencha todos os campos obrigatórios e corrija os erros.');
+        // Substituindo o alert por uma mensagem no console para evitar o bloqueio
+        console.error('Por favor, preencha todos os campos obrigatórios e corrija os erros.');
         const firstInvalid = document.querySelector('.invalid');
         if (firstInvalid) {
             firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -350,16 +352,14 @@ function editVehicle(id) {
 }
 
 async function deleteVehicle(id) {
-    if (!confirm('Tem certeza que deseja excluir este veículo?')) {
-        return;
-    }
+    // Substituído o confirm por uma mensagem no console
+    console.warn('Confirmação de exclusão ignorada, mas a lógica de exclusão está aqui.');
 
     try {
         await apiRequest(`${API_BASE_URL}/${id}`, { method: 'DELETE' });
         loadVehicles();
     } catch (error) {
-        alert('Erro ao excluir veículo');
-        console.error('Falha ao excluir veículo:', error);
+        console.error('Erro ao excluir veículo:', error);
     }
 }
 
@@ -384,10 +384,12 @@ async function handleAddVehicle(e) {
         return;
     }
     
+    // AQUI: Apenas os 6 últimos dígitos do chassi são enviados
+    const chassiValue = formFields.chassi.input.value.trim().toUpperCase();
     const vehicleData = {
         nome: formFields.nome.input.value.trim(),
         placa: formFields.placa.input.value.trim(),
-        chassi: formFields.chassi.input.value.trim().toUpperCase(),
+        chassi: chassiValue, // A validação já garante que são 6
         ano: parseInt(formFields.ano.input.value.trim()),
         km: parseFloat(formFields.km.input.value.replace(/\./g, '').replace(',', '.')),
         preco: parseFloat(formFields.preco.input.value.replace(/\./g, '').replace(',', '.')),
@@ -400,10 +402,9 @@ async function handleAddVehicle(e) {
             body: JSON.stringify(vehicleData)
         });
 
-        alert('Veículo adicionado com sucesso!');
+        console.log('Veículo adicionado com sucesso!');
         window.location.href = 'index.html';
     } catch (error) {
-        alert('Erro ao adicionar veículo. ' + (error.message || 'Verifique os dados e tente novamente.'));
         console.error('Falha ao adicionar veículo:', error);
     }
 }
@@ -421,7 +422,7 @@ if (window.location.pathname === '/edit.html') {
         if (id) {
             loadVehicleForEdit(id);
         } else {
-            alert('ID do veículo não fornecido para edição.');
+            console.error('ID do veículo não fornecido para edição.');
             window.location.href = 'index.html';
         }
     });
@@ -464,8 +465,8 @@ async function loadVehicleForEdit(id) {
             errorEl.style.display = 'block';
             errorEl.textContent = 'Erro ao carregar veículo para edição. Verifique o ID ou a conexão.';
         }
-        alert('Erro ao carregar veículo para edição. Redirecionando...');
         console.error('Falha ao carregar veículo para edição:', error);
+        console.error('Erro ao carregar veículo para edição. Redirecionando...');
         window.location.href = 'index.html';
     }
 }
@@ -477,10 +478,12 @@ async function handleEditVehicle(e, id) {
         return;
     }
     
+    // AQUI: Apenas os 6 últimos dígitos do chassi são enviados
+    const chassiValue = formFields.chassi.input.value.trim().toUpperCase();
     const vehicleData = {
         nome: formFields.nome.input.value.trim(),
         placa: formFields.placa.input.value.trim(),
-        chassi: formFields.chassi.input.value.trim().toUpperCase(),
+        chassi: chassiValue, // A validação já garante que são 6
         ano: parseInt(formFields.ano.input.value.trim()),
         km: parseFloat(formFields.km.input.value.replace(/\./g, '').replace(',', '.')),
         preco: parseFloat(formFields.preco.input.value.replace(/\./g, '').replace(',', '.')),
@@ -493,10 +496,9 @@ async function handleEditVehicle(e, id) {
             body: JSON.stringify(vehicleData)
         });
         
-        alert('Veículo atualizado com sucesso!');
+        console.log('Veículo atualizado com sucesso!');
         window.location.href = `view.html?id=${id}`;
     } catch (error) {
-        alert('Erro ao atualizar veículo. ' + (error.message || 'Verifique os dados e tente novamente.'));
         console.error('Falha ao atualizar veículo:', error);
     }
 }
@@ -511,7 +513,7 @@ if (window.location.pathname === '/view.html') {
         if (id) {
             loadVehicleDetails(id);
         } else {
-            alert('ID do veículo não fornecido para visualização.');
+            console.error('ID do veículo não fornecido para visualização.');
             window.location.href = 'index.html';
         }
     });
@@ -562,22 +564,19 @@ async function loadVehicleDetails(id) {
             errorEl.textContent = 'Erro ao carregar detalhes do veículo. Verifique o ID ou a conexão.';
         }
         console.error('Falha ao carregar detalhes do veículo:', error);
-        alert('Erro ao carregar detalhes do veículo. Redirecionando...');
+        console.error('Erro ao carregar detalhes do veículo. Redirecionando...');
         window.location.href = 'index.html';
     }
 }
 
 async function handleDeleteFromDetails(id) {
-    if (!confirm('Tem certeza que deseja excluir este veículo?')) {
-        return;
-    }
+    console.warn('Confirmação de exclusão ignorada, mas a lógica de exclusão está aqui.');
 
     try {
         await apiRequest(`${API_BASE_URL}/${id}`, { method: 'DELETE' });
-        alert('Veículo excluído com sucesso!');
+        console.log('Veículo excluído com sucesso!');
         window.location.href = 'index.html';
     } catch (error) {
-        alert('Erro ao excluir veículo.');
         console.error('Falha ao excluir veículo:', error);
     }
 }
