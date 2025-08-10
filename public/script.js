@@ -82,14 +82,13 @@ function clearFieldError(inputElement, errorElement) {
     inputElement.setAttribute('aria-invalid', 'false');
 }
 
-// Validação de Chassi - AGORA VALIDA APENAS 6 DÍGITOS
+// Validação de Chassi
 const validateChassi = () => {
     const input = formFields.chassi.input;
     const error = formFields.chassi.error;
     if (!input || !error) return true;
 
     const chassiValue = input.value.trim().toUpperCase();
-    // Padrão para exatamente 6 caracteres alfanuméricos válidos
     const chassiPattern = /^[A-HJ-NPR-Z0-9]{6}$/;
 
     if (input.required && chassiValue === '') {
@@ -126,37 +125,29 @@ const validateAno = () => {
     return true;
 };
 
-// --- NOVA/AJUSTADA FUNÇÃO: Formatação de números enquanto o usuário digita ---
+// Formatação de números enquanto o usuário digita
 const formatNumberInput = (input, isCurrency = false) => {
     let value = input.value;
-    
-    // 1. Remove tudo que não for dígito, vírgula ou ponto (apenas para permitir entrada inicial)
+
     value = value.replace(/[^0-9,.]/g, '');
 
     if (isCurrency) {
-        // Para moeda, tratamos a vírgula como separador decimal
-        // Remove todos os pontos, substitui a primeira vírgula por ponto, e remove outras vírgulas
-        value = value.replace(/\./g, ''); // Remove pontos de milhar para processamento
+        value = value.replace(/\./g, '');
         const parts = value.split(',');
-        if (parts.length > 2) { // Evita múltiplas vírgulas
+        if (parts.length > 2) {
             value = parts[0] + ',' + parts.slice(1).join('');
         }
-
-        // Se houver vírgula, garante no máximo 2 casas decimais
         if (value.includes(',')) {
             let [integerPart, decimalPart] = value.split(',');
-            decimalPart = decimalPart.substring(0, 2); // Limita a 2 decimais
-            // Adiciona pontos de milhar na parte inteira
+            decimalPart = decimalPart.substring(0, 2);
             integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             input.value = integerPart + ',' + decimalPart;
         } else {
-            // Se não tem vírgula, apenas adiciona pontos de milhar
             input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
     } else {
-        // Para quilometragem (não é moeda, apenas números inteiros com pontos de milhar)
-        value = value.replace(/\./g, ''); // Remove todos os pontos para reformatar
-        value = value.replace(/,/g, ''); // Remove vírgulas também
+        value = value.replace(/\./g, '');
+        value = value.replace(/,/g, '');
         input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 };
@@ -171,15 +162,14 @@ const validateNumericField = (input, error, fieldName, allowDecimals, required) 
         showFieldError(input, error, `O campo ${fieldName} é obrigatório.`);
         return false;
     }
-    
+
     if (!required && value === '') {
         clearFieldError(input, error);
         return true;
     }
 
-    // Remove pontos de milhares e troca vírgula por ponto para validação interna e conversão numérica
     const cleanedValue = value.replace(/\./g, '').replace(',', '.');
-    
+
     const numericPattern = allowDecimals ? /^\d+(\.\d{1,2})?$/ : /^\d+$/;
 
     if (!numericPattern.test(cleanedValue)) {
@@ -244,19 +234,18 @@ function addValidationListeners() {
 
     if (formFields.km && formFields.km.input) {
         formFields.km.input.addEventListener('input', () => {
-            formatNumberInput(formFields.km.input, false); // Não é moeda
-            validateNumericField(formFields.km.input, formFields.km.error, 'Quilometragem', true, true);
+            formatNumberInput(formFields.km.input, false);
+            validateNumericField(formFields.km.input, formFields.km.error, 'Quilometragem', false, true);
         });
-        formFields.km.input.addEventListener('blur', () => validateNumericField(formFields.km.input, formFields.km.error, 'Quilometragem', true, true));
+        formFields.km.input.addEventListener('blur', () => validateNumericField(formFields.km.input, formFields.km.error, 'Quilometragem', false, true));
     }
-    
+
     if (formFields.preco && formFields.preco.input) {
         formFields.preco.input.addEventListener('input', () => {
-            formatNumberInput(formFields.preco.input, true); // É moeda
+            formatNumberInput(formFields.preco.input, true);
             validateNumericField(formFields.preco.input, formFields.preco.error, 'Preço', true, true);
         });
         formFields.preco.input.addEventListener('blur', () => {
-            // Ao sair do campo de preço, se for um número válido, formata para 2 casas decimais e pontos/vírgulas
             const cleanedValue = formFields.preco.input.value.replace(/\./g, '').replace(',', '.');
             if (!isNaN(parseFloat(cleanedValue)) && cleanedValue.trim() !== '') {
                 formFields.preco.input.value = parseFloat(cleanedValue).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -278,14 +267,13 @@ function validateForm() {
     const isPlacaValid = validateRequiredText(formFields.placa.input, formFields.placa.error, 'Placa');
     const isChassiValid = validateChassi();
     const isAnoValid = validateAno();
-    const isKmValid = validateNumericField(formFields.km.input, formFields.km.error, 'Quilometragem', true, true);
-    const isPrecoValid = validateNumericField(formFields.preco.input, formFields.preco.error, 'Preço', true, true);
+    const isKmValid = validateNumericField(formFields.km.input, formFields.km.error, 'Quilometragem', false, true); // KM deve ser inteiro
+    const isPrecoValid = validateNumericField(formFields.preco.input, formFields.preco.error, 'Preço', true, true); // Preço pode ter decimais
     const areImagesValid = validateImageUrls();
 
     const allFieldsValid = isNomeValid && isPlacaValid && isChassiValid && isAnoValid && isKmValid && isPrecoValid && areImagesValid;
 
     if (!allFieldsValid) {
-        // Substituindo o alert por uma mensagem no console para evitar o bloqueio
         console.error('Por favor, preencha todos os campos obrigatórios e corrija os erros.');
         const firstInvalid = document.querySelector('.invalid');
         if (firstInvalid) {
@@ -340,15 +328,46 @@ async function loadVehicles() {
     }
 }
 
+// Melhoria na criação do card para lidar com a exibição da imagem e do placeholder
 function createVehicleCard(vehicle) {
-    const imageHtml = vehicle.imagens && vehicle.imagens.length > 0
-        ? `<img src="${vehicle.imagens[0]}" alt="${vehicle.nome}" onerror="this.parentElement.innerHTML='<div class=\\"no-image\\">Sem imagem</div>'">`
-        : '<div class="no-image">Sem imagem</div>';
+    const imageUrl = (vehicle.imagens && vehicle.imagens.length > 0)
+        ? vehicle.imagens[0]
+        : null;
+
+    let imageContent = '<div class="no-image">Sem imagem</div>';
+
+    if (imageUrl) {
+        const imgElement = document.createElement('img');
+        imgElement.src = imageUrl;
+        imgElement.alt = vehicle.nome;
+        imgElement.style.display = 'none'; // Esconde a imagem até que ela carregue
+
+        // Tenta carregar a imagem e adiciona o conteúdo correto ao DOM
+        const tempImage = new Image();
+        tempImage.onload = () => {
+            const cardImageContainer = document.querySelector(`.vehicle-card[data-id="${vehicle._id}"] .vehicle-image`);
+            if (cardImageContainer) {
+                cardImageContainer.innerHTML = ''; // Limpa o placeholder
+                cardImageContainer.appendChild(imgElement);
+                imgElement.style.display = 'block'; // Mostra a imagem
+            }
+        };
+        tempImage.onerror = () => {
+            // Se a imagem falhar ao carregar, o placeholder "Sem imagem" permanece
+            const cardImageContainer = document.querySelector(`.vehicle-card[data-id="${vehicle._id}"] .vehicle-image`);
+            if (cardImageContainer) {
+                cardImageContainer.innerHTML = '<div class="no-image">Sem imagem</div>';
+            }
+        };
+        tempImage.src = imageUrl; // Inicia o carregamento
+
+        imageContent = '<div class="loading-image">Carregando...</div>'; // Placeholder temporário
+    }
 
     return `
-        <div class="vehicle-card">
+        <div class="vehicle-card" data-id="${vehicle._id}">
             <div class="vehicle-image">
-                ${imageHtml}
+                ${imageContent}
             </div>
 
             <div class="vehicle-info">
@@ -377,7 +396,6 @@ function editVehicle(id) {
 }
 
 async function deleteVehicle(id) {
-    // Substituído o confirm por uma mensagem no console
     console.warn('Confirmação de exclusão ignorada, mas a lógica de exclusão está aqui.');
 
     try {
@@ -394,7 +412,7 @@ if (window.location.pathname === '/add.html') {
         initializeFormFields();
         const precoInput = document.getElementById('preco');
         if (precoInput) precoInput.setAttribute('required', 'true');
-        
+
         const form = document.getElementById('vehicleForm');
         if (form) {
             form.addEventListener('submit', handleAddVehicle);
@@ -408,13 +426,12 @@ async function handleAddVehicle(e) {
     if (!validateForm()) {
         return;
     }
-    
-    // AQUI: Apenas os 6 últimos dígitos do chassi são enviados
+
     const chassiValue = formFields.chassi.input.value.trim().toUpperCase();
     const vehicleData = {
         nome: formFields.nome.input.value.trim(),
         placa: formFields.placa.input.value.trim(),
-        chassi: chassiValue, // A validação já garante que são 6
+        chassi: chassiValue,
         ano: parseInt(formFields.ano.input.value.trim()),
         km: parseFloat(formFields.km.input.value.replace(/\./g, '').replace(',', '.')),
         preco: parseFloat(formFields.preco.input.value.replace(/\./g, '').replace(',', '.')),
@@ -469,14 +486,14 @@ async function loadVehicleForEdit(id) {
         if (formFields.placa.input) formFields.placa.input.value = vehicle.placa;
         if (formFields.chassi.input) formFields.chassi.input.value = vehicle.chassi;
         if (formFields.ano.input) formFields.ano.input.value = vehicle.ano;
-        
+
         if (formFields.km.input) {
-            formFields.km.input.value = vehicle.km ? vehicle.km.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : ''; // Km sem decimais
+            formFields.km.input.value = vehicle.km ? vehicle.km.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '';
         }
         if (formFields.preco.input) {
-            formFields.preco.input.value = vehicle.preco ? vehicle.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''; // Preço com 2 decimais
+            formFields.preco.input.value = vehicle.preco ? vehicle.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '';
         }
-        
+
         if (formFields.imagens.input) formFields.imagens.input.value = vehicle.imagens ? vehicle.imagens.join('\n') : '';
 
         if (form) {
@@ -491,7 +508,6 @@ async function loadVehicleForEdit(id) {
             errorEl.textContent = 'Erro ao carregar veículo para edição. Verifique o ID ou a conexão.';
         }
         console.error('Falha ao carregar veículo para edição:', error);
-        console.error('Erro ao carregar veículo para edição. Redirecionando...');
         window.location.href = 'index.html';
     }
 }
@@ -502,13 +518,12 @@ async function handleEditVehicle(e, id) {
     if (!validateForm()) {
         return;
     }
-    
-    // AQUI: Apenas os 6 últimos dígitos do chassi são enviados
+
     const chassiValue = formFields.chassi.input.value.trim().toUpperCase();
     const vehicleData = {
         nome: formFields.nome.input.value.trim(),
         placa: formFields.placa.input.value.trim(),
-        chassi: chassiValue, // A validação já garante que são 6
+        chassi: chassiValue,
         ano: parseInt(formFields.ano.input.value.trim()),
         km: parseFloat(formFields.km.input.value.replace(/\./g, '').replace(',', '.')),
         preco: parseFloat(formFields.preco.input.value.replace(/\./g, '').replace(',', '.')),
@@ -520,7 +535,7 @@ async function handleEditVehicle(e, id) {
             method: 'PUT',
             body: JSON.stringify(vehicleData)
         });
-        
+
         console.log('Veículo atualizado com sucesso!');
         window.location.href = `view.html?id=${id}`;
     } catch (error) {
@@ -534,7 +549,7 @@ if (window.location.pathname === '/view.html') {
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
-        
+
         if (id) {
             loadVehicleDetails(id);
         } else {
@@ -544,6 +559,7 @@ if (window.location.pathname === '/view.html') {
     });
 }
 
+// Melhoria na galeria de imagens para a página de detalhes
 async function loadVehicleDetails(id) {
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
@@ -557,7 +573,7 @@ async function loadVehicleDetails(id) {
         if (detailsEl) detailsEl.style.display = 'none';
 
         const vehicle = await apiRequest(`${API_BASE_URL}/${id}`);
-        
+
         if (document.getElementById('vehicleName')) document.getElementById('vehicleName').textContent = vehicle.nome;
         if (document.getElementById('vehiclePlate')) document.getElementById('vehiclePlate').textContent = vehicle.placa;
         if (document.getElementById('vehicleChassi')) document.getElementById('vehicleChassi').textContent = vehicle.chassi;
@@ -570,9 +586,28 @@ async function loadVehicleDetails(id) {
         const imageGallery = document.getElementById('imageGallery');
         if (imageGallery) {
             if (vehicle.imagens && vehicle.imagens.length > 0) {
-                imageGallery.innerHTML = vehicle.imagens.map(img => 
-                    `<img src="${img}" alt="${vehicle.nome}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\"no-image\\">Imagem não carregada</div>'">`
-                ).join('');
+                const validImageUrls = vehicle.imagens.filter(url => /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(url));
+
+                if (validImageUrls.length > 0) {
+                    imageGallery.innerHTML = ''; // Limpa o conteúdo
+                    validImageUrls.forEach(imgUrl => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = imgUrl;
+                        imgElement.alt = vehicle.nome;
+
+                        imgElement.onerror = () => {
+                            // Se a imagem falhar, a substitui por um placeholder
+                            const placeholder = document.createElement('div');
+                            placeholder.className = 'no-image-details';
+                            placeholder.textContent = 'Imagem não carregada';
+                            imgElement.replaceWith(placeholder);
+                        };
+
+                        imageGallery.appendChild(imgElement);
+                    });
+                } else {
+                    imageGallery.innerHTML = '<div class="no-images"><p>Nenhuma imagem válida disponível</p></div>';
+                }
             } else {
                 imageGallery.innerHTML = '<div class="no-images"><p>Nenhuma imagem disponível</p></div>';
             }
@@ -580,7 +615,7 @@ async function loadVehicleDetails(id) {
 
         if (editBtn) editBtn.onclick = () => window.location.href = `edit.html?id=${id}`;
         if (deleteBtn) deleteBtn.onclick = () => handleDeleteFromDetails(id);
-        
+
         if (loadingEl) loadingEl.style.display = 'none';
         if (detailsEl) detailsEl.style.display = 'grid';
     } catch (error) {
@@ -589,7 +624,6 @@ async function loadVehicleDetails(id) {
             errorEl.textContent = 'Erro ao carregar detalhes do veículo. Verifique o ID ou a conexão.';
         }
         console.error('Falha ao carregar detalhes do veículo:', error);
-        console.error('Erro ao carregar detalhes do veículo. Redirecionando...');
         window.location.href = 'index.html';
     }
 }
