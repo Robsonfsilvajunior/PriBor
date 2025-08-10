@@ -1,3 +1,12 @@
+/*
+    Palette de cores inspirada na imagem "Pribor Motors":
+    - Fundo Principal: #1a1a1a (preto/cinza muito escuro)
+    - Elementos (Cards, cabeçalho): #2c2c2c (um cinza um pouco mais claro)
+    - Textos/Ícones: #ffffff (branco)
+    - Destaque/Preço: #ff4136 (um vermelho vivo, similar ao da imagem)
+    - Destaque Secundário (opcional, como o amarelo do logo): #ffdc00
+*/
+
 /* Reset Básico */
 * {
     margin: 0;
@@ -7,19 +16,18 @@
 
 /* Base Geral */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
+    font-family: 'Inter', sans-serif; /* Usando uma fonte moderna */
+    background-color: #1a1a1a;
+    color: #ffffff; /* Texto claro para fundo escuro */
     line-height: 1.6;
-    font-size: 16px; /* Define um tamanho de fonte base para facilitar o uso de 'rem' */
+    font-size: 16px;
 }
 
 /* Todas as Imagens Responsivas */
-/* Garante que nenhuma imagem "estoure" seu contêiner */
 img {
-    max-width: 100%; /* A imagem nunca será maior que seu elemento pai */
-    height: auto;    /* Mantém a proporção da imagem automaticamente */
-    display: block;  /* Evita espaços extras abaixo da imagem em alguns contextos */
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 /* Contêiner Principal */
@@ -31,34 +39,34 @@ img {
 
 /* Cabeçalho */
 header {
-    background: white;
+    background: #2c2c2c;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4); /* Sombra mais forte para o tema escuro */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha em telas menores */
+    flex-wrap: wrap;
 }
 
 header h1 {
     font-size: 24px;
-    color: #333;
-    margin-bottom: 0; /* Garante que não haja margem extra em telas maiores */
+    color: #ffffff;
+    margin-bottom: 0;
 }
 
 .header-actions {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap; /* Permite que os botões quebrem em várias linhas se a tela for muito pequena */
-    justify-content: center; /* Centraliza os botões em telas pequenas */
-    margin-top: 0; /* Remove margem padrão que pode ser adicionada pelo flex-wrap */
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0;
 }
 
 /* Botões */
 .btn-add, .btn-edit, .btn-delete, .btn-view, .btn-back, .btn-submit, .btn-cancel {
-    padding: 10px 15px; /* Reduz um pouco o padding horizontal para caber melhor em telas menores */
+    padding: 10px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -66,54 +74,71 @@ header h1 {
     font-weight: 500;
     text-decoration: none;
     display: inline-block;
-    text-align: center; /* Garante que o texto do botão esteja centralizado */
-    white-space: nowrap; /* Evita quebra de linha dentro do texto do botão */
+    text-align: center;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
 }
 
-/* Cores dos botões (mantido do seu código, sem alterações) */
-.btn-add { background: #007bff; color: white; }
-.btn-edit { background: #ffc107; color: #333; }
-.btn-delete { background: #dc3545; color: white; }
-.btn-view { background: #28a745; color: white; }
-.btn-back { background: #6c757d; color: white; }
-.btn-submit { background: #007bff; color: white; }
-.btn-cancel { background: #6c757d; color: white; }
+/* Cores dos botões adaptadas para o tema escuro */
+.btn-add, .btn-submit {
+    background: #007bff; /* Azul para adicionar/enviar */
+    color: white;
+}
+.btn-edit {
+    background: #ffc107; /* Amarelo para editar */
+    color: #1a1a1a;
+}
+.btn-delete {
+    background: #dc3545; /* Vermelho para deletar */
+    color: white;
+}
+.btn-view {
+    background: #28a745; /* Verde para ver */
+    color: white;
+}
+.btn-back, .btn-cancel {
+    background: #6c757d; /* Cinza para voltar/cancelar */
+    color: white;
+}
+
+/* Efeito hover para os botões */
+.btn-add:hover, .btn-submit:hover { background: #0056b3; }
+.btn-edit:hover { background: #e0a800; }
+.btn-delete:hover { background: #c82333; }
+.btn-view:hover { background: #218838; }
+.btn-back:hover, .btn-cancel:hover { background: #5a6268; }
 
 
 /* Grid de veículos */
 .vehicles-grid {
-    /* `minmax(300px, 1fr)` já é bom para ser responsivo.
-       Pode-se ajustar o `minmax` para um valor menor em telas muito pequenas,
-       mas 300px geralmente funciona bem para cards. */
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Min-width um pouco menor */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
-/* Card de veículo (mantido do seu código, sem alterações significativas) */
+/* Card de veículo */
 .vehicle-card {
-    background: white;
+    background: #2c2c2c;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     transition: transform 0.2s;
 }
 
 .vehicle-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-5px);
 }
 
 .vehicle-image {
     height: 200px;
     overflow: hidden;
-    background: #f8f9fa;
+    background: #1a1a1a;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .vehicle-image img {
-    /* Essas regras já são boas, mas a regra global 'img' acima já cobre o `max-width` */
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -130,14 +155,14 @@ header h1 {
 
 .vehicle-info h3 {
     margin-bottom: 10px;
-    font-size: 1.125rem; /* Usando rem para tamanho de fonte (18px) */
-    color: #333;
+    font-size: 1.125rem;
+    color: #ffffff;
 }
 
 .vehicle-info p {
     margin-bottom: 5px;
-    font-size: 0.875rem; /* Usando rem para tamanho de fonte (14px) */
-    color: #666;
+    font-size: 0.875rem;
+    color: #cccccc;
 }
 
 .vehicle-info .plate {
@@ -147,29 +172,29 @@ header h1 {
 
 .vehicle-info .price {
     font-weight: 600;
-    color: #28a745;
+    color: #ff4136; /* Cor de destaque (vermelho) para o preço */
 }
 
 .vehicle-actions {
     padding: 15px;
     display: flex;
     gap: 10px;
-    border-top: 1px solid #eee;
-    flex-wrap: wrap; /* Garante que os botões das ações do veículo também quebrem */
+    border-top: 1px solid #444; /* Borda mais clara para contraste */
+    flex-wrap: wrap;
 }
 
 .vehicle-actions button {
-    flex: 1; /* Faz os botões se esticarem para preencher o espaço */
+    flex: 1;
     padding: 8px;
     font-size: 12px;
-    min-width: 80px; /* Garante um tamanho mínimo para botões pequenos em telas muito estreitas */
+    min-width: 80px;
 }
 
 /* Estados */
 .loading, .error {
     text-align: center;
     padding: 40px;
-    font-size: 1rem; /* Usando rem (16px) */
+    font-size: 1rem;
 }
 
 .error {
@@ -180,10 +205,10 @@ header h1 {
 .form {
     max-width: 600px;
     margin: 0 auto;
-    background: white;
+    background: #2c2c2c;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .form-group {
@@ -200,36 +225,38 @@ header h1 {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
-    color: #333;
+    color: #ffffff;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #444;
+    background: #333; /* Fundo do input mais escuro */
+    color: #ffffff;
     border-radius: 4px;
-    font-size: 1rem; /* Usando rem (16px) */
+    font-size: 1rem;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #007bff; /* Continua azul para foco */
 }
 
 .form-actions {
     display: flex;
     gap: 15px;
     margin-top: 30px;
-    flex-wrap: wrap; /* Faz os botões de ação do formulário quebrarem */
+    flex-wrap: wrap;
 }
 
 .form-actions button {
     flex: 1;
     padding: 12px;
-    font-size: 1rem; /* Usando rem (16px) */
-    min-width: 120px; /* Garante um tamanho mínimo para os botões do formulário */
+    font-size: 1rem;
+    min-width: 120px;
 }
 
 /* Página de detalhes do veículo */
@@ -241,40 +268,35 @@ header h1 {
 }
 
 .vehicle-images {
-    background: white;
+    background: #2c2c2c;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .image-gallery {
     display: grid;
     gap: 15px;
-    /* Pode ser útil para galerias com muitas imagens em mobile */
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Miniaturas flexíveis */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 }
 
 .image-gallery img {
-    /* width: 100%; height: 300px; object-fit: cover; */
-    /* A regra global 'img' já cuida do `width: 100%; height: auto;`
-       Se você quer uma altura fixa, mantenha `height: 300px` aqui.
-       Se for uma galeria de miniaturas, pode precisar de uma altura menor. */
-    height: 150px; /* Ajuste para miniaturas se for o caso */
+    height: 150px;
     object-fit: cover;
     border-radius: 4px;
 }
 
 .vehicle-info {
-    background: white;
+    background: #2c2c2c;
     border-radius: 8px;
     padding: 30px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .vehicle-info h1 {
     margin-bottom: 30px;
-    color: #333;
-    font-size: 2rem; /* Título principal, pode ser um pouco menor em mobile */
+    color: #ffffff;
+    font-size: 2rem;
 }
 
 .info-grid {
@@ -286,34 +308,34 @@ header h1 {
 .info-item {
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Alinha o texto na vertical */
+    align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid #eee;
-    flex-wrap: wrap; /* Permite que label e span quebrem linha */
+    border-bottom: 1px solid #444; /* Borda mais clara */
+    flex-wrap: wrap;
 }
 
 .info-item label, .info-item span {
-    font-size: 1rem; /* Ajustando para rem */
-    flex: 1; /* Permite que o label e span ocupem espaço */
-    min-width: 100px; /* Garante um tamanho mínimo se quebrar linha */
+    font-size: 1rem;
+    flex: 1;
+    min-width: 100px;
 }
 
 .info-item label {
     font-weight: 600;
-    color: #666;
+    color: #ccc;
 }
 
 .info-item span {
     font-weight: 500;
-    color: #333;
-    text-align: right; /* Alinha o valor à direita */
+    color: #ffffff;
+    text-align: right;
 }
 
 .vehicle-dates {
     padding-top: 20px;
-    border-top: 1px solid #eee;
-    font-size: 0.875rem; /* Ajustando para rem (14px) */
-    color: #666;
+    border-top: 1px solid #444;
+    font-size: 0.875rem;
+    color: #ccc;
 }
 
 .vehicle-dates p {
@@ -325,93 +347,89 @@ header h1 {
 /* Ajustes para telas menores que 768px (tablets e celulares) */
 @media (max-width: 768px) {
     .container {
-        padding: 15px; /* Diminui o padding do container em telas menores */
+        padding: 15px;
     }
 
     header {
-        flex-direction: column; /* Cabeçalho em coluna */
+        flex-direction: column;
         gap: 15px;
         text-align: center;
-        padding: 15px; /* Ajusta o padding do cabeçalho */
+        padding: 15px;
     }
 
     header h1 {
-        font-size: 20px; /* Diminui o tamanho do título do cabeçalho */
+        font-size: 20px;
     }
 
     .header-actions {
-        width: 100%; /* Botões do cabeçalho ocupam a largura total */
-        justify-content: center; /* Centraliza os botões */
-        margin-top: 10px; /* Adiciona uma margem superior */
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
     }
 
     .btn-add, .btn-edit, .btn-delete, .btn-view, .btn-back, .btn-submit, .btn-cancel {
-        width: auto; /* Deixa o width automático */
-        flex-grow: 1; /* Cresce para ocupar o espaço disponível se estiverem na mesma linha */
-        margin: 5px; /* Adiciona uma pequena margem entre os botões quando quebram */
+        width: auto;
+        flex-grow: 1;
+        margin: 5px;
     }
 
-    /* Grid de veículos: uma coluna para telas pequenas */
     .vehicles-grid {
         grid-template-columns: 1fr;
-        gap: 15px; /* Reduz um pouco o espaçamento */
+        gap: 15px;
     }
 
-    /* Detalhes do veículo: layout de uma coluna */
     .vehicle-details {
         grid-template-columns: 1fr;
-        gap: 20px; /* Reduz o espaçamento entre as seções */
+        gap: 20px;
     }
 
     .vehicle-images {
-        padding: 15px; /* Ajusta o padding */
+        padding: 15px;
     }
 
     .image-gallery img {
-        height: 250px; /* Altura um pouco menor para imagens da galeria em mobile */
+        height: 250px;
     }
 
     .vehicle-info {
-        padding: 20px; /* Ajusta o padding */
+        padding: 20px;
     }
 
     .vehicle-info h1 {
-        font-size: 1.5rem; /* Título dos detalhes do veículo menor (24px) */
+        font-size: 1.5rem;
     }
 
     .info-item {
-        flex-direction: column; /* Label e valor em linhas separadas */
-        align-items: flex-start; /* Alinha ao início */
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .info-item label, .info-item span {
-        text-align: left; /* Alinha texto à esquerda */
-        width: 100%; /* Ocupa a largura total */
-        margin-bottom: 5px; /* Espaço entre label e valor */
+        text-align: left;
+        width: 100%;
+        margin-bottom: 5px;
     }
     .info-item span {
-        font-weight: normal; /* Valor com fonte normal para não competir com label */
+        font-weight: normal;
     }
 
-
-    /* Formulário: uma coluna para os campos */
     .form-row {
         grid-template-columns: 1fr;
         gap: 15px;
     }
 
     .form {
-        padding: 20px; /* Ajusta o padding do formulário */
+        padding: 20px;
     }
 
     .form-actions {
-        flex-direction: column; /* Botões do formulário em coluna */
+        flex-direction: column;
         gap: 10px;
     }
 
     .form-actions button {
-        width: 100%; /* Botões do formulário ocupam a largura total */
-        min-width: unset; /* Remove o min-width para que possam ocupar 100% */
+        width: 100%;
+        min-width: unset;
     }
 }
 
@@ -422,40 +440,40 @@ header h1 {
     }
 
     .btn-add, .btn-edit, .btn-delete, .btn-view, .btn-back, .btn-submit, .btn-cancel {
-        padding: 8px 12px; /* Reduz ainda mais o padding dos botões */
-        font-size: 13px; /* Diminui a fonte dos botões */
+        padding: 8px 12px;
+        font-size: 13px;
     }
 
     .header-actions {
-        gap: 5px; /* Menos espaço entre os botões do cabeçalho */
+        gap: 5px;
     }
 
     .vehicle-card {
-        margin: 0 5px; /* Pequena margem lateral para não colar nas bordas */
+        margin: 0;
     }
 
     .vehicle-image {
-        height: 180px; /* Altura da imagem do card um pouco menor */
+        height: 180px;
     }
 
     .vehicle-info h3 {
-        font-size: 1rem; /* Título do card menor (16px) */
+        font-size: 1rem;
     }
 
     .image-gallery img {
-        height: 120px; /* Altura das miniaturas da galeria menor */
+        height: 120px;
     }
 
     .error-message {
-        color: red;
+        color: #ff4136; /* Cor do erro */
         font-size: 0.85em;
         margin-top: 5px;
-        display: block; /* Garante que o span ocupe sua própria linha */
+        display: block;
     }
     
     .form-group input.invalid,
     .form-group textarea.invalid {
-        border-color: red;
-        box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+        border-color: #ff4136;
+        box-shadow: 0 0 0 0.2rem rgba(255, 65, 54, 0.25);
     }
 }
