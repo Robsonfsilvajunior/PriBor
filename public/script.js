@@ -203,6 +203,25 @@ const validateNumericField = (input, error, fieldName, allowDecimals, required) 
     return true;
 };
 
+// Validação de URLs de Imagem
+const validateImageUrls = () => {
+    const input = formFields.imagens.input;
+    const error = formFields.imagens.error;
+    if (!input || !error) return true;
+
+    const urls = input.value.split('\n').map(url => url.trim()).filter(url => url.length > 0);
+    const imagePattern = /\.(jpeg|jpg|gif|png|webp|svg)$/i;
+
+    for (const url of urls) {
+        if (!imagePattern.test(url)) {
+            showFieldError(input, error, `A URL '${url}' não parece ser um link direto de imagem.`);
+            return false;
+        }
+    }
+    clearFieldError(input, error);
+    return true;
+};
+
 
 // Validação de Nome e Placa (apenas obrigatoriedade)
 const validateRequiredText = (input, error, fieldName) => {
@@ -245,6 +264,11 @@ function addValidationListeners() {
             validateNumericField(formFields.preco.input, formFields.preco.error, 'Preço', true, true);
         });
     }
+
+    if (formFields.imagens && formFields.imagens.input) {
+        formFields.imagens.input.addEventListener('input', validateImageUrls);
+        formFields.imagens.input.addEventListener('blur', validateImageUrls);
+    }
 }
 
 
@@ -256,8 +280,9 @@ function validateForm() {
     const isAnoValid = validateAno();
     const isKmValid = validateNumericField(formFields.km.input, formFields.km.error, 'Quilometragem', true, true);
     const isPrecoValid = validateNumericField(formFields.preco.input, formFields.preco.error, 'Preço', true, true);
+    const areImagesValid = validateImageUrls();
 
-    const allFieldsValid = isNomeValid && isPlacaValid && isChassiValid && isAnoValid && isKmValid && isPrecoValid;
+    const allFieldsValid = isNomeValid && isPlacaValid && isChassiValid && isAnoValid && isKmValid && isPrecoValid && areImagesValid;
 
     if (!allFieldsValid) {
         // Substituindo o alert por uma mensagem no console para evitar o bloqueio
