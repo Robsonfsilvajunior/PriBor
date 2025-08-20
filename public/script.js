@@ -60,6 +60,7 @@ function initializeFormFields() {
         nome: { input: document.getElementById('nome'), error: document.getElementById('nome-error') },
         placa: { input: document.getElementById('placa'), error: document.getElementById('placa-error') },
         chassi: { input: document.getElementById('chassi'), error: document.getElementById('chassi-error') },
+        especificacao: { input: document.getElementById('especificacao'), error: document.getElementById('especificacao-error') },
         ano: { input: document.getElementById('ano'), error: document.getElementById('ano-error') },
         km: { input: document.getElementById('km'), error: document.getElementById('km-error') },
         preco: { input: document.getElementById('preco'), error: document.getElementById('preco-error') },
@@ -225,6 +226,17 @@ const validateRequiredText = (input, error, fieldName) => {
     return true;
 };
 
+// Validação de Especificação (opcional)
+const validateEspecificacao = () => {
+    const input = formFields.especificacao.input;
+    const error = formFields.especificacao.error;
+    if (!input || !error) return true;
+
+    // Campo é opcional, então sempre retorna true
+    clearFieldError(input, error);
+    return true;
+};
+
 // Adiciona event listeners para validação em tempo real
 function addValidationListeners() {
     if (formFields.nome && formFields.nome.input) formFields.nome.input.addEventListener('input', () => validateRequiredText(formFields.nome.input, formFields.nome.error, 'Nome/Modelo'));
@@ -266,12 +278,13 @@ function validateForm() {
     const isNomeValid = validateRequiredText(formFields.nome.input, formFields.nome.error, 'Nome/Modelo');
     const isPlacaValid = validateRequiredText(formFields.placa.input, formFields.placa.error, 'Placa');
     const isChassiValid = validateChassi();
+    const isEspecificacaoValid = validateEspecificacao();
     const isAnoValid = validateAno();
     const isKmValid = validateNumericField(formFields.km.input, formFields.km.error, 'Quilometragem', false, true); // KM deve ser inteiro
     const isPrecoValid = validateNumericField(formFields.preco.input, formFields.preco.error, 'Preço', true, true); // Preço pode ter decimais
     const areImagesValid = validateImageUrls();
 
-    const allFieldsValid = isNomeValid && isPlacaValid && isChassiValid && isAnoValid && isKmValid && isPrecoValid && areImagesValid;
+    const allFieldsValid = isNomeValid && isPlacaValid && isChassiValid && isEspecificacaoValid && isAnoValid && isKmValid && isPrecoValid && areImagesValid;
 
     if (!allFieldsValid) {
         console.error('Por favor, preencha todos os campos obrigatórios e corrija os erros.');
@@ -345,43 +358,97 @@ function createVehicleCard(vehicle) {
         // Tenta carregar a imagem e adiciona o conteúdo correto ao DOM
         const tempImage = new Image();
         tempImage.onload = () => {
-            const cardImageContainer = document.querySelector(`.vehicle-card[data-id="${vehicle._id}"] .vehicle-image`);
+            const cardImageContainer = document.querySelector(`.vehicle-card[data-id="${vehicle._id}"] .vehicle-image-container img`);
             if (cardImageContainer) {
-                cardImageContainer.innerHTML = ''; // Limpa o placeholder
-                cardImageContainer.appendChild(imgElement);
-                imgElement.style.display = 'block'; // Mostra a imagem
+                cardImageContainer.style.display = 'block'; // Mostra a imagem
             }
         };
         tempImage.onerror = () => {
             // Se a imagem falhar ao carregar, o placeholder "Sem imagem" permanece
-            const cardImageContainer = document.querySelector(`.vehicle-card[data-id="${vehicle._id}"] .vehicle-image`);
+            const cardImageContainer = document.querySelector(`.vehicle-card[data-id="${vehicle._id}"] .vehicle-image-container`);
             if (cardImageContainer) {
                 cardImageContainer.innerHTML = '<div class="no-image">Sem imagem</div>';
             }
         };
         tempImage.src = imageUrl; // Inicia o carregamento
 
-        imageContent = '<div class="loading-image">Carregando...</div>'; // Placeholder temporário
+        imageContent = `<img src="${imageUrl}" alt="${vehicle.nome}" style="display: none;">`;
     }
+
+    // Calcula dias no estoque (simulado - você pode ajustar conforme sua lógica de negócio)
+    const diasNoEstoque = Math.floor(Math.random() * 30) + 1; // Simulação de 1 a 30 dias
 
     return `
         <div class="vehicle-card" data-id="${vehicle._id}">
-            <div class="vehicle-image">
+            <!-- Coluna da Imagem -->
+            <a href="view.html?id=${vehicle._id}" class="vehicle-image-container">
                 ${imageContent}
-            </div>
+            </a>
 
+            <!-- Coluna de Informações do Veículo -->
             <div class="vehicle-info">
-                <h3>${vehicle.nome}</h3>
-                <p class="plate">${vehicle.placa}</p>
-                <p class="km">${formatKm(vehicle.km)}</p>
-                <p class="year">${vehicle.ano}</p>
-                <p class="price">${formatPrice(vehicle.preco)}</p>
+                <h3>
+                    <span>${vehicle.nome.toUpperCase()}</span>
+                    <a href="edit.html?id=${vehicle._id}" class="icon-btn edit-icon" title="Editar veículo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff4136" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </a>
+                </h3>
+                <p>${vehicle.chassi || 'Modelo não informado'}</p>
+                <p>${vehicle.especificacao || 'Especificação não informada'}</p>
+                
+                <!-- Ações do veículo -->
+                <div class="vehicle-actions-icons">
+                    <button class="icon-btn print-icon" title="Imprimir" onclick="printVehicle('${vehicle._id}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff4136" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                    </button>
+                    <button class="icon-btn delete-icon" title="Excluir" onclick="deleteVehicle('${vehicle._id}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff4136" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
-            <div class="vehicle-actions">
-                <button onclick="viewVehicle('${vehicle._id}')" class="btn-view">Ver</button>
-                <button onclick="editVehicle('${vehicle._id}')" class="btn-edit">Editar</button>
-                <button onclick="deleteVehicle('${vehicle._id}')" class="btn-delete">Excluir</button>
+            <!-- Coluna de Especificações -->
+            <div class="vehicle-specs">
+                <div class="specs-row">
+                    <div class="spec-item">
+                        <span class="spec-label">KM</span>
+                        <span class="spec-value">${formatKm(vehicle.km)}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Placa</span>
+                        <span class="spec-value">${vehicle.placa}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Ano</span>
+                        <span class="spec-value">${vehicle.ano}</span>
+                    </div>
+                </div>
+                <div class="specs-row">
+                    <span class="dias-estoque">Dias no estoque: ${diasNoEstoque}</span>
+                </div>
+            </div>
+
+            <!-- Coluna de Preço -->
+            <div class="vehicle-price-container">
+                <span class="price-value">${formatPrice(vehicle.preco)}</span>
+                <a href="edit.html?id=${vehicle._id}" class="icon-btn edit-icon" title="Editar preço">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff4136" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </a>
             </div>
         </div>
     `;
@@ -432,6 +499,7 @@ async function handleAddVehicle(e) {
         nome: formFields.nome.input.value.trim(),
         placa: formFields.placa.input.value.trim(),
         chassi: chassiValue,
+        especificacao: formFields.especificacao.input.value.trim(),
         ano: parseInt(formFields.ano.input.value.trim()),
         km: parseFloat(formFields.km.input.value.replace(/\./g, '').replace(',', '.')),
         preco: parseFloat(formFields.preco.input.value.replace(/\./g, '').replace(',', '.')),
@@ -485,6 +553,7 @@ async function loadVehicleForEdit(id) {
         if (formFields.nome.input) formFields.nome.input.value = vehicle.nome;
         if (formFields.placa.input) formFields.placa.input.value = vehicle.placa;
         if (formFields.chassi.input) formFields.chassi.input.value = vehicle.chassi;
+        if (formFields.especificacao.input) formFields.especificacao.input.value = vehicle.especificacao || '';
         if (formFields.ano.input) formFields.ano.input.value = vehicle.ano;
 
         if (formFields.km.input) {
@@ -524,6 +593,7 @@ async function handleEditVehicle(e, id) {
         nome: formFields.nome.input.value.trim(),
         placa: formFields.placa.input.value.trim(),
         chassi: chassiValue,
+        especificacao: formFields.especificacao.input.value.trim(),
         ano: parseInt(formFields.ano.input.value.trim()),
         km: parseFloat(formFields.km.input.value.replace(/\./g, '').replace(',', '.')),
         preco: parseFloat(formFields.preco.input.value.replace(/\./g, '').replace(',', '.')),
@@ -647,4 +717,11 @@ function goBack() {
     } else {
         window.location.href = 'index.html';
     }
+}
+
+// Função para imprimir veículo (pode ser implementada conforme necessário)
+function printVehicle(id) {
+    console.log(`Imprimindo veículo ${id}`);
+    // Implementar lógica de impressão
+    alert('Funcionalidade de impressão será implementada em breve!');
 }
