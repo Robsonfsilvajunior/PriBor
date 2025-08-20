@@ -450,6 +450,7 @@ function createVehicleCard(vehicle) {
                     </svg>
                 </a>
             </div>
+
         </div>
     `;
 }
@@ -644,14 +645,20 @@ async function loadVehicleDetails(id) {
 
         const vehicle = await apiRequest(`${API_BASE_URL}/${id}`);
 
+        // Preenche os campos da página de visualização
         if (document.getElementById('vehicleName')) document.getElementById('vehicleName').textContent = vehicle.nome;
+        if (document.getElementById('vehicleModel')) document.getElementById('vehicleModel').textContent = vehicle.chassi || 'Modelo não informado';
+        if (document.getElementById('vehicleTransmission')) document.getElementById('vehicleTransmission').textContent = vehicle.especificacao || 'Especificação não informada';
         if (document.getElementById('vehiclePlate')) document.getElementById('vehiclePlate').textContent = vehicle.placa;
-        if (document.getElementById('vehicleChassi')) document.getElementById('vehicleChassi').textContent = vehicle.chassi;
         if (document.getElementById('vehicleYear')) document.getElementById('vehicleYear').textContent = vehicle.ano;
         if (document.getElementById('vehicleKm')) document.getElementById('vehicleKm').textContent = formatKm(vehicle.km);
         if (document.getElementById('vehiclePrice')) document.getElementById('vehiclePrice').textContent = formatPrice(vehicle.preco);
         if (document.getElementById('vehicleCreated')) document.getElementById('vehicleCreated').textContent = formatDate(vehicle.createdAt);
         if (document.getElementById('vehicleUpdated')) document.getElementById('vehicleUpdated').textContent = formatDate(vehicle.updatedAt);
+
+        // Calcula dias no estoque (simulado)
+        const diasNoEstoque = Math.floor(Math.random() * 30) + 1;
+        if (document.getElementById('daysInStock')) document.getElementById('daysInStock').textContent = diasNoEstoque;
 
         const imageGallery = document.getElementById('imageGallery');
         if (imageGallery) {
@@ -668,7 +675,7 @@ async function loadVehicleDetails(id) {
                         imgElement.onerror = () => {
                             // Se a imagem falhar, a substitui por um placeholder
                             const placeholder = document.createElement('div');
-                            placeholder.className = 'no-image-details';
+                            placeholder.className = 'no-image-placeholder';
                             placeholder.textContent = 'Imagem não carregada';
                             imgElement.replaceWith(placeholder);
                         };
@@ -676,13 +683,14 @@ async function loadVehicleDetails(id) {
                         imageGallery.appendChild(imgElement);
                     });
                 } else {
-                    imageGallery.innerHTML = '<div class="no-images"><p>Nenhuma imagem válida disponível</p></div>';
+                    imageGallery.innerHTML = '<div class="no-image-placeholder">Nenhuma imagem válida disponível</div>';
                 }
             } else {
-                imageGallery.innerHTML = '<div class="no-images"><p>Nenhuma imagem disponível</p></div>';
+                imageGallery.innerHTML = '<div class="no-image-placeholder">Nenhuma imagem disponível</div>';
             }
         }
 
+        // Configura os botões de ação
         if (editBtn) editBtn.onclick = () => window.location.href = `edit.html?id=${id}`;
         if (deleteBtn) deleteBtn.onclick = () => handleDeleteFromDetails(id);
 
